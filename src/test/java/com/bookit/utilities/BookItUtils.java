@@ -16,7 +16,7 @@ public class BookItUtils {
                 .queryParam("password", password)
                 .when()
                 .get(ConfigurationReader.get("base_url") + "/sign");
-        //first we get response with token here
+        //first we get response with token here, because we need to use token further
 
         String token = "Bearer " + response.path("accessToken");
         //we assign to String to have token
