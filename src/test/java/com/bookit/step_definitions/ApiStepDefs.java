@@ -4,6 +4,7 @@ import com.bookit.pages.SelfPage;
 import com.bookit.utilities.BookItUtils;
 import com.bookit.utilities.ConfigurationReader;
 import com.bookit.utilities.DBUtils;
+import com.bookit.utilities.Environment;
 import io.cucumber.java.en.*;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -21,6 +22,8 @@ public class ApiStepDefs {
     Response response;//make it global
 
     String emailGlobal;//make it global
+
+    int idToDelete;//make it global
 
     @Given("I logged Bookit api using {string} and {string}")
     public void i_logged_Bookit_api_using_and(String email, String password) {
@@ -141,6 +144,52 @@ public class ApiStepDefs {
         Assert.assertEquals(actualFullName,actualFullNameUI);
         Assert.assertEquals(actualRole,actualRoleUI);
 
+    }
+
+    @When("I send POST request {string} endpoint with following information")
+    public void i_send_POST_request_endpoint_with_following_information
+            (String path, Map<String, String> userInfo) { //we put our Scenario Outline in Map
+
+        System.out.println(userInfo);
+
+        //try to post something
+        response = given()
+                .accept(ContentType.JSON)
+                .header("Authorization",token)
+                .queryParams(userInfo)//place your Map inside the queryParams
+                .log().all()
+                .when()
+                .post(ConfigurationReader.get("base_url") + path)
+                //we put our params with 'post'
+                .then().log().all().extract().response();
+
+        idToDelete = response.path("entryId");
+        //if we want to delete added entry by index number we need to assign to int
+
+    }
+
+    //delete previously added student
+    @And("I delete previously added student")
+    public void iDeletePreviouslyAddedStudent() {
+        //we need id from previous post request
+
+        given()
+                .header("Authorization", token)
+                .pathParam("id",idToDelete)//id number as stated above
+                .when().delete(ConfigurationReader.get("base_url")+"/api/students/{id}")
+                .then().statusCode(204);
+
+    }
+
+    @Given("I get environment information")
+    public void iGetEnvironmentInformation() {
+
+        System.out.println(Environment.URL);
+        System.out.println(Environment.BASE_URL);
+        System.out.println(Environment.TEACHER_EMAIL);
+        System.out.println(Environment.TEACHER_PASSWORD);
+        System.out.println(Environment.MEMBER_EMAIL);
+        System.out.println(Environment.MEMBER_PASSWORD);
     }
 
 
