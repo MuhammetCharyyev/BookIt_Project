@@ -190,6 +190,8 @@ public class ApiStepDefs {
         System.out.println(Environment.TEACHER_PASSWORD);
         System.out.println(Environment.MEMBER_EMAIL);
         System.out.println(Environment.MEMBER_PASSWORD);
+
+        System.out.println(System.getProperty("user.dir"));
     }
 
 

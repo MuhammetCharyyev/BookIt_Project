@@ -27,16 +27,19 @@ public class Environment {
                 environment = System.getProperty("environment") :
                 ConfigurationReader.get("environment");
         //it is ternary to state 'if' condition to get our config.props data
-        //if there is no entry in Terminal
-
+        //if there is no entry in Terminal -> System.getProperty("environment") != null
+        //then get it from 'properties' ->ConfigurationReader.get("environment")
+        //if !null then read ->environment = System.getProperty("environment")
 
         try {
 
             String path = System.getProperty("user.dir") +
                     "/src/test/resources/Environments/" + environment + ".properties";
-            //string for assign a path
+            //string for assign a path/ make it dynamic with indication 'environment'
+            //string path as above, to read exact value from config.prop
 
             FileInputStream input = new FileInputStream(path);
+            //input our 'path'
             properties = new Properties();
             properties.load(input);
             input.close();
